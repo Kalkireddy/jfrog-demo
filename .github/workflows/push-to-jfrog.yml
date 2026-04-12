@@ -21,6 +21,10 @@ jobs:
           sudo systemctl restart docker
           sleep 5
 
+      - name: Debug registry endpoint
+        run: |
+          curl -v http://a254b4d2f38aa4600af769e24eb6003a-729136038.us-east-1.elb.amazonaws.com:8082/v2/ || true
+
       - name: Login to JFrog Artifactory
         run: |
           echo "${{ secrets.ARTIFACTORY_PASSWORD }}" | docker login \
