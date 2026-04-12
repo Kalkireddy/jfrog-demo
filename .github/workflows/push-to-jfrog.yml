@@ -1,0 +1,33 @@
+name: Build and Push to JFrog
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Login to JFrog Artifactory
+        run: |
+          echo "${{ secrets.ARTIFACTORY_PASSWORD }}" | docker login \
+            artifactory-main-artifactory-nginx-jfrog-main.apps.ncluster.sujeetopenshift.store \
+            -u ${{ secrets.ARTIFACTORY_USER }} \
+            --password-stdin
+
+      - name: Build Docker Image
+        run: |
+          docker build -t \
+            artifactory-main-artifactory-nginx-jfrog-main.apps.ncluster.sujeetopenshift.store/docker-local/my-app:${{ github.sha }} .
+
+      - name: Push Docker Image to Artifactory
+        run: |
+          docker push \
+            artifactory-main-artifactory-nginx-jfrog-main.apps.ncluster.sujeetopenshift.store/docker-local/my-app:${{ github.sha }}
