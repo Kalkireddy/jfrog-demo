@@ -15,6 +15,10 @@ jobs:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
 
+      - name: Debug registry connectivity
+        run: |
+          curl -v http://a7d0613f465e842b19293958a516e3a2-353318693.us-east-1.elb.amazonaws.com/v2/ 2>&1 || true
+
       - name: Configure insecure registry
         run: |
           echo '{"insecure-registries": ["a7d0613f465e842b19293958a516e3a2-353318693.us-east-1.elb.amazonaws.com"]}' | sudo tee /etc/docker/daemon.json
